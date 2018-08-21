@@ -59,14 +59,6 @@ public class App {
 					System.out.println("Starting...");
 					while(true) {
 
-						try {
-							int timer = Integer.parseInt(properties.getProperty(TIMER_IN_SECONDS)) * 1000;
-							System.out.println("Waiting " + timer);
-							Thread.sleep(timer);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-
 						String[] split = properties.getProperty(WORDS_COMA_SEPARATED).split(",");
 						System.out.println("Looking for\n" + Arrays.toString(split));
 						boolean result = ParseAndFind.parseAndFind(
@@ -82,6 +74,14 @@ public class App {
 							System.out.println("Sending mail");
 							Mail.sendMail(properties, password);
 							System.exit(-1);
+						}
+
+						try {
+							int timer = Integer.parseInt(properties.getProperty(TIMER_IN_SECONDS)) * 1000;
+							System.out.println("Waiting " + timer);
+							Thread.sleep(timer);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 
 					}
