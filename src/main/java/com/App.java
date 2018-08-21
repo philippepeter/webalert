@@ -22,7 +22,7 @@ public class App {
 	private static final String URL              = "url";
 	private static final String ATTRIBUTE_VALUE           = "attribute.value";
 	private static final String ATTRIBUTE_KEY           = "attribute.key";
-	private static final String WORDS_COMA_SEPARATED           = "xords.coma.separated";
+	private static final String WORDS_COMA_SEPARATED           = "words.coma.separated";
 
 
 	public static void main(String[] args) throws IOException {
