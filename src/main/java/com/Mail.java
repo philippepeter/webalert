@@ -1,5 +1,7 @@
 package com;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -15,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 /**
  *
  */
+@Slf4j
 public final class Mail {
 
 	public final static String MAILKEY = "mail.address";
@@ -45,9 +48,9 @@ public final class Mail {
 			msg.setText(properties.getProperty(MAIL_CONTENT) );
 			msg.setHeader("XPriority", "1");
 			Transport.send(msg);
-			System.out.println("Mail has been sent successfully");
+			log.info("Mail has been sent successfully");
 		} catch (MessagingException mex) {
-			System.out.println("Unable to send an email" + mex);
+			log.error("",mex);
 		}
 	}
 }

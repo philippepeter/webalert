@@ -1,5 +1,6 @@
 package com;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -16,6 +17,7 @@ import java.util.Properties;
 /**
  *
  */
+@Slf4j
 public class App {
 
 	private static final String TIMER_IN_SECONDS = "timerinseconds";
@@ -52,33 +54,32 @@ public class App {
 				if(file.exists()) {
 					properties.load(new FileInputStream(new File(propertiesFile)));
 				} else {
-					System.out.println("Wrong properties file path: " + propertiesFile);
+					log.error("Wrong properties file path: " + propertiesFile);
 				}
 
 				new Thread(() -> {
-					System.out.println("Starting...");
+					log.info("Starting");
 					while(true) {
 
 						String[] split = properties.getProperty(WORDS_COMA_SEPARATED).split(",");
-						System.out.println("Looking for\n" + Arrays.toString(split));
+						log.info("Looking for\n" + Arrays.toString(split));
 						boolean result = ParseAndFind.parseAndFind(
 								properties.getProperty(URL),
 								properties.getProperty(ATTRIBUTE_KEY),
 								properties.getProperty(ATTRIBUTE_VALUE),
 								split);
 
-						System.out.println("Found=" + result);
-
+						log.info("Found=" + result);
 
 						if(result) {
-							System.out.println("Sending mail");
+							log.info("Sending mail");
 							Mail.sendMail(properties, password);
 							System.exit(-1);
 						}
 
 						try {
 							int timer = Integer.parseInt(properties.getProperty(TIMER_IN_SECONDS)) * 1000;
-							System.out.println("Waiting " + timer);
+							log.info("Waiting " + timer);
 							Thread.sleep(timer);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -90,7 +91,7 @@ public class App {
 			}
 		}
 		catch( ParseException exp ) {
-			System.out.println( "Unexpected exception:" + exp.getMessage() );
+			log.error("", exp);
 		}
 
 
