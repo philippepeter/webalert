@@ -26,6 +26,7 @@ public class App {
 	private static final String ATTRIBUTE_KEY           = "attribute.key";
 	private static final String WORDS_COMA_SEPARATED           = "words.coma.separated";
 
+	private static String previewsValue = null;
 
 	public static void main(String[] args) throws IOException {
 
@@ -63,11 +64,12 @@ public class App {
 
 						String[] split = properties.getProperty(WORDS_COMA_SEPARATED).split(",");
 						log.info("Looking for\n" + Arrays.toString(split));
-						boolean result = ParseAndFind.parseAndFind(
-								properties.getProperty(URL),
-								properties.getProperty(ATTRIBUTE_KEY),
-								properties.getProperty(ATTRIBUTE_VALUE),
-								split);
+						String value = ParseAndFind.parseAndGet(
+						        properties.getProperty(URL),
+                                properties.getProperty(ATTRIBUTE_KEY),
+                                properties.getProperty(ATTRIBUTE_VALUE));
+
+						boolean result = ParseAndFind.find(value, split);
 
 						log.info("Found=" + result);
 
@@ -76,6 +78,13 @@ public class App {
 							Mail.sendMail(properties, password);
 							System.exit(-1);
 						}
+
+						if(previewsValue != null) {
+						    if(previewsValue.equals(value) == false) {
+						        Mail.sendChangeMail(properties, password);
+                            }
+                        }
+                        previewsValue = value;
 
 						try {
 							int timer = Integer.parseInt(properties.getProperty(TIMER_IN_SECONDS)) * 1000;
