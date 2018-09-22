@@ -25,7 +25,7 @@ public class App {
     private static final String ATTRIBUTE_VALUE = "attribute.value";
     private static final String ATTRIBUTE_KEY = "attribute.key";
     private static final String WORDS_COMA_SEPARATED = "words.coma.separated";
-    private static long time=0;
+    private static long time = 0;
 
     private static String previewsValue = null;
 
@@ -61,45 +61,47 @@ public class App {
 
                 new Thread(() -> {
                     log.info("Starting");
+                    String[] split = properties.getProperty(WORDS_COMA_SEPARATED).split(",");
+                    log.info("Looking for\n" + Arrays.toString(split));
                     while (true) {
+                        try {
+                            String value = ParseAndFind.parseAndGet(
+                                    properties.getProperty(URL),
+                                    properties.getProperty(ATTRIBUTE_KEY),
+                                    properties.getProperty(ATTRIBUTE_VALUE));
 
-                        String[] split = properties.getProperty(WORDS_COMA_SEPARATED).split(",");
-                        log.info("Looking for\n" + Arrays.toString(split));
-                        String value = ParseAndFind.parseAndGet(
-                                properties.getProperty(URL),
-                                properties.getProperty(ATTRIBUTE_KEY),
-                                properties.getProperty(ATTRIBUTE_VALUE));
-
-                        boolean result = ParseAndFind.find(value, split);
+                            boolean result = ParseAndFind.find(value, split);
 
 
-                        if (previewsValue != null) {
-                            if (previewsValue.equals(value) == false) {
+                            if (previewsValue != null) {
+                                if (previewsValue.equals(value) == false) {
+                                    if (result) {
+                                        log.info("Sending mail, word found!");
+                                        Mail.sendMail(properties, password);
+                                    } else {
+                                        log.info("Sending mail, change detected");
+                                        Mail.sendChangeMail(properties, password);
+                                    }
+                                }
+                            } else {
                                 if (result) {
-                                    log.info("Sending mail");
+                                    log.info("Sending mail, word found!");
                                     Mail.sendMail(properties, password);
-                                } else {
-                                    Mail.sendChangeMail(properties, password);
                                 }
                             }
-                        } else {
-                            if (result) {
-                                log.info("Sending mail");
-                                Mail.sendMail(properties, password);
-                            }
-                        }
-                        previewsValue = value;
+                            previewsValue = value;
 
-                        try {
+
                             int timer = Integer.parseInt(properties.getProperty(TIMER_IN_SECONDS)) * 1000;
                             Thread.sleep(timer);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        long newTime = System.currentTimeMillis();
-                        if(newTime - time > 3600*1000) {
-                            log.info("working = ok");
-                            time = newTime;
+
+                            long newTime = System.currentTimeMillis();
+                            if (newTime - time > 3600 * 1000) {
+                                log.info("working = ok");
+                                time = newTime;
+                            }
+                        } catch (Exception e) {
+                            log.error("", e);
                         }
 
                     }
