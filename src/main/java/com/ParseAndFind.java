@@ -18,12 +18,19 @@ public final class ParseAndFind {
         Document doc;
         try {
             doc = Jsoup.connect(url).get();
-            Element element = doc.getElementsByAttributeValue(attribute, attributeValue).get(0);
-            return element.toString();
         } catch (IOException e) {
             log.error("",e);
+            return null;
         }
-        return null;
+
+        Element element = doc.getElementsByAttributeValue(attribute, attributeValue).get(0);
+        if(element != null) {
+            return element.toString();
+         } else {
+            log.error("No attribute {} with value {} found in doc {}", attribute, attributeValue, doc.toString());
+            return null;
+        }
+
     }
 
     public final static boolean find(String text, String... words) {
