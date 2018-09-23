@@ -1,5 +1,6 @@
 package com;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -69,27 +70,32 @@ public class App {
                                     properties.getProperty(URL),
                                     properties.getProperty(ATTRIBUTE_KEY),
                                     properties.getProperty(ATTRIBUTE_VALUE));
+                            if(value == null) {
+                                log.error("Null return when parsing values");
 
-                            boolean result = ParseAndFind.find(value, split);
+                            } else {
+                                boolean result = ParseAndFind.find(value, split);
 
 
-                            if (previewsValue != null) {
-                                if (previewsValue.equals(value) == false) {
+                                if (previewsValue != null) {
+                                    if (previewsValue.equals(value) == false) {
+                                        if (result) {
+                                            log.info("Sending mail, word found!");
+                                            Mail.sendMail(properties, password);
+                                        } else {
+                                            log.info("Sending mail, change detected");
+                                            Mail.sendChangeMail(properties, password);
+                                        }
+                                    }
+                                } else {
                                     if (result) {
                                         log.info("Sending mail, word found!");
                                         Mail.sendMail(properties, password);
-                                    } else {
-                                        log.info("Sending mail, change detected");
-                                        Mail.sendChangeMail(properties, password);
                                     }
                                 }
-                            } else {
-                                if (result) {
-                                    log.info("Sending mail, word found!");
-                                    Mail.sendMail(properties, password);
-                                }
+                                previewsValue = value;
                             }
-                            previewsValue = value;
+
 
 
                             int timer = Integer.parseInt(properties.getProperty(TIMER_IN_SECONDS)) * 1000;
