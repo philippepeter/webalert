@@ -34,7 +34,11 @@ public final class ParseAndFind {
     }
 
     public final static boolean find(String text, String... words) {
-        return Arrays.stream(words).anyMatch(w -> text.contains(w));
+        if(words == null || words.length == 0 || (words.length==1&&words[0].equals(""))) {
+            return false;
+        } else {
+            return Arrays.stream(words).anyMatch(w -> text.contains(w));
+        }
 
     }
 }
